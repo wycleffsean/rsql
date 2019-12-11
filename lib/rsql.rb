@@ -1,5 +1,5 @@
 require "rsql/version"
 
 module Rsql
-  # Your code goes here...
+  require "rsql/table"
 end
