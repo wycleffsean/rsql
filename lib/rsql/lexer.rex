@@ -17,9 +17,11 @@ rules
   /\(/            { [:lparen, text] }
   /\)/            { [:rparen, text] }
   /\s+/           { [:ws, text] }
-  /[a-zA-Z]\w+/   { [:identifier, text] }
+  /or/i           { [:op_or, text] }
+  /and/i          { [:op_and, text] }
+  /[a-zA-Z]\w*/   { [:identifier, text] }
   /=/             { [:op_equal, text] }
-  /;/             { [:colon, text] }
+  /;/             { [:semicolon, text] }
   /,/             { [:comma, text] }
   /\d+/           { [:integer, text.to_i] }
   /'/		  :QUOTE
