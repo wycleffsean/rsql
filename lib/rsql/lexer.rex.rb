@@ -133,12 +133,16 @@ class Rsql::Lexer
             action { [:rparen, text] }
           when text = ss.scan(/\s+/) then
             action { [:ws, text] }
-          when text = ss.scan(/[a-zA-Z]\w+/) then
+          when text = ss.scan(/or/i) then
+            action { [:op_or, text] }
+          when text = ss.scan(/and/i) then
+            action { [:op_and, text] }
+          when text = ss.scan(/[a-zA-Z]\w*/) then
             action { [:identifier, text] }
           when text = ss.scan(/=/) then
             action { [:op_equal, text] }
           when text = ss.scan(/;/) then
-            action { [:colon, text] }
+            action { [:semicolon, text] }
           when text = ss.scan(/,/) then
             action { [:comma, text] }
           when text = ss.scan(/\d+/) then

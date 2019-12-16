@@ -4,4 +4,5 @@ require "rsql/ext/hash"
 module Rsql
   require "rsql/table"
   autoload :Lexer, "rsql/lexer"
+  autoload :Parser, "rsql/parser"
 end

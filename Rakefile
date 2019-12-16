@@ -12,7 +12,16 @@ Rake.application.rake_require 'oedipus_lex'
 
 task :default => %i[
   lexer
+  parser
   test
 ]
 
-task :lexer => 'lib/rsql/lexer.rex.rb'
+task :lexer => 'lib/rsql/lexer.rex.rb' do
+  puts 'Building lexer'
+end
+task :parser => 'lib/rsql/parser.tab.rb'
+
+file 'lib/rsql/parser.tab.rb' => 'lib/rsql/parser.y' do
+  puts 'Building parser'
+  `cd lib/rsql && racc -g parser.y`
+end
