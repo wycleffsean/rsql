@@ -8,7 +8,7 @@ module Rsql
 
     def test_parse_select
       ast = parser.parse <<~SQL
-        SELECT *
+        SELECT *, thing
         FROM my_table
         WHERE ( this=that OR foo = bar ) AND a=b;
       SQL

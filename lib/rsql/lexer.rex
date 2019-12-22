@@ -16,11 +16,15 @@ rules
   /\*/            { [:star, text] }
   /\(/            { [:lparen, text] }
   /\)/            { [:rparen, text] }
-  /\s+/           { [:ws, text] }
+  /\s+/           #{ [:ws, text] }
   /or/i           { [:op_or, text] }
   /and/i          { [:op_and, text] }
   /[a-zA-Z]\w*/   { [:identifier, text] }
   /=/             { [:op_equal, text] }
+  /<=/            { [:op_lte, text] }
+  />=/            { [:op_gte, text] }
+  /</             { [:op_lt, text] }
+  />/             { [:op_gt, text] }
   /;/             { [:semicolon, text] }
   /,/             { [:comma, text] }
   /\d+/           { [:integer, text.to_i] }

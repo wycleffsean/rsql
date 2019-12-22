@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     rsql (0.1.0)
-      racc
+      racc (~> 1.4, >= 1.4.16)
 
 GEM
   remote: https://rubygems.org/

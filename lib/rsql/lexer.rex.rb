@@ -131,8 +131,8 @@ class Rsql::Lexer
             action { [:lparen, text] }
           when text = ss.scan(/\)/) then
             action { [:rparen, text] }
-          when text = ss.scan(/\s+/) then
-            action { [:ws, text] }
+          when ss.skip(/\s+/) then
+            # do nothing
           when text = ss.scan(/or/i) then
             action { [:op_or, text] }
           when text = ss.scan(/and/i) then
@@ -141,6 +141,14 @@ class Rsql::Lexer
             action { [:identifier, text] }
           when text = ss.scan(/=/) then
             action { [:op_equal, text] }
+          when text = ss.scan(/<=/) then
+            action { [:op_lte, text] }
+          when text = ss.scan(/>=/) then
+            action { [:op_gte, text] }
+          when text = ss.scan(/</) then
+            action { [:op_lt, text] }
+          when text = ss.scan(/>/) then
+            action { [:op_gt, text] }
           when text = ss.scan(/;/) then
             action { [:semicolon, text] }
           when text = ss.scan(/,/) then
