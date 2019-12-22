@@ -33,7 +33,7 @@ module Rsql
                   when Class
                     raise NotImplementedError
                   end
-      @columns[name] = constraint
+      @columns[name.to_sym] = constraint
     end
 
     def insert(row, skip_constraints: false)
@@ -52,9 +52,10 @@ module Rsql
       if columns.include? :*
         Table.new(columns: @columns.dup, rows: @rows.values)
       else
+        cols = columns.map(&:to_sym)
         Table.new(
-          columns: @columns.slice(*columns),
-          rows: @rows.values.map {|row| row.slice(*columns) }
+          columns: @columns.slice(*cols),
+          rows: @rows.values.map {|row| row.slice(*cols) }
         )
       end
     end
