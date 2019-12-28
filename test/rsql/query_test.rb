@@ -14,6 +14,10 @@ module Rsql
       people.insert age: 80, email: 'old@example.com'
     end
 
+    def test_trivial_query
+      Query.call @db, 'SELECT * FROM people;'
+    end
+
     def test_simple_query
       res = Query.call @db, <<-SQL
         SELECT email FROM people WHERE age >= 30;

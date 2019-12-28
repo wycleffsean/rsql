@@ -53,14 +53,14 @@ rule
     | values { result = val }
     | values_collection comma values { result = val[0] + [val[2]] }
   values:  lparen literal_collection rparen { result = val[1] }
-  select_query: select_stmt from_stmt where_stmt { result = [:select_query, [val[1], val[2], val[0]]] }
+  select_query: select_stmt from_stmt where_stmt { result = [:select_query, val.values_at(1, 2, 0).compact] }
   select_stmt: kw_select collection { result = [:select, val[1]]  }
   from_stmt:
     kw_from relation { result = [:from, val[1]] }
   relation:
     symbol period symbol { result = { schema_name: val[0], table_name: val[2] } }
     | symbol { result = { table_name: val[0].to_sym } }
-  where_stmt: kw_where predicate { result = [:where, val[1]] }
+  where_stmt: | kw_where predicate { result = [:where, val[1]] }
   predicate:
     atom binary_operator atom { result = [val[1], [ val[0], val[2] ]] }
     | predicate binary_operator predicate { result = [val[1], [ val[0], val[2] ]] }
