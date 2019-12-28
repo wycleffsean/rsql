@@ -4,7 +4,7 @@ module Rsql
       @params = params
     end
 
-    def assert!(value)
+    def assert!(column_name = '...', value)
       super
       raise Column::ConstraintViolationError unless value.kind_of?(::String)
       if !@params[:limit].nil? && value.length >= @params[:limit]

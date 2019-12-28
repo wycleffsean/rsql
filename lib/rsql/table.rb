@@ -46,7 +46,7 @@ module Rsql
         if (unknown_columns = row.keys - @columns.keys).any?
           raise UnknownColumnError, unknown_columns
         end
-        @columns.each { |name, constraint| constraint.assert! row[name] }
+        @columns.each { |name, constraint| constraint.assert! name, row[name] }
       end
       @rows[@sequence.next!] = row
     end

@@ -52,5 +52,17 @@ module Rsql
       SQL
       assert_equal count + 2, @db.schemas[:public][:people].count
     end
+
+    def test_insert_into_with_select_star
+      count = @db.schemas[:public][:people].count
+      res = Query.call @db, <<-SQL
+        INSERT INTO people(age, email)
+        SELECT age, email FROM people WHERE age >= 30;
+      SQL
+      assert_equal 3, res.count
+      assert_includes res, {email: "dude@example.com", age: 30}
+      assert_includes res, {email: "mid@example.com", age: 50}
+      assert_includes res, {email: "old@example.com", age: 80}
+    end
   end
 end

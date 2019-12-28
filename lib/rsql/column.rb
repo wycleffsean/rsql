@@ -13,8 +13,10 @@ class Rsql::Column
     @params = DEFAULTS.merge(params)
   end
 
-  def assert!(value)
-    raise ConstraintViolationError if @params[:null] == false && value.nil?
+  def assert!(column_name = '...', value)
+    if @params[:null] == false && value.nil?
+      raise ConstraintViolationError, "null value in column \"#{column_name}\" violates not-null constraint"
+    end
   end
 
   def dump(value)
