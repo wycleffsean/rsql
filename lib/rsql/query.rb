@@ -33,5 +33,17 @@ module Rsql
     def select_query(*args)
       self.class.new(@database, *args).call
     end
+
+    # This method does not do any arity checking on rows.  The array zip
+    # method drops superfluous tail values, as a result extra values are
+    # ignored e.g.
+    #   (foo, bar) VALUES (1, 2, 3)
+    # would insert the row {foo: 1, bar: 2}
+    def insert_into_query(schema_name: nil, table_name:, column_names:, rows:)
+      table = @database.from(schema_name: schema_name, table_name: table_name)
+      rows.each do |row|
+        table.insert Hash[column_names.zip(row)]
+      end
+    end
   end
 end

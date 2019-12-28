@@ -45,10 +45,10 @@ module Rsql
       assert_kind_of Column::Integer, db.schemas[:public][:people].columns[:age]
     end
 
-    def xtest_insert_into
+    def test_insert_into
       count = @db.schemas[:public][:people].count
       res = Query.call @db, <<-SQL
-        INSERT INTO people(age, email) VALUES (), ()
+        INSERT INTO people(age, email) VALUES (12, 'abc@example.com'), (10, 'foo@place.com');
       SQL
       assert_equal count + 2, @db.schemas[:public][:people].count
     end

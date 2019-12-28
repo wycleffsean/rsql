@@ -35,11 +35,17 @@ rule
   statement:
       select_query
     | create_table_query
+    | insert_into_query
   create_table_query: kw_create kw_table relation lparen column_definitions rparen semicolon { result = [[:create_table, val[2].merge(columns: val[4]) ]] }
   column_definitions:
       column_definition { result = val }
     | column_definitions comma column_definition { result = val[0] << val[2] }
   column_definition: symbol symbol { result = [val[0], val[1]] }
+  insert_into_query: kw_insert kw_into relation lparen symbol_collection rparen kw_values values_collection semicolon { result = [[:insert_into_query, val[2].merge(column_names: val[4], rows: val[7])]] }
+  values_collection:
+    | values { result = val }
+    | values_collection comma values { result = val[0] + [val[2]] }
+  values:  lparen literal_collection rparen { result = val[1] }
   select_query: select_stmt from_stmt where_stmt semicolon { result = [[:select_query, [val[1], val[2], val[0]]]] }
   select_stmt: kw_select collection { result = [:select, val[1]]  }
   from_stmt:
@@ -63,9 +69,18 @@ rule
   collection:
     | atom { result = val }
     | collection comma atom { result = val[0] << val[2] }
+  symbol_collection:
+    | symbol { result = val }
+    | symbol_collection comma symbol { result = val[0] << val[2] }
+  literal_collection:
+    | literal { result = val }
+    | literal_collection comma literal { result = val[0] << val[2] }
   atom:
-    star { result = val[0].to_sym }
+      star { result = val[0].to_sym }
     | symbol
-    | integer
+    | literal
+  literal:
+      integer
+    | string
   symbol: identifier { result = val[0].downcase.to_sym }
 end
