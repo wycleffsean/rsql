@@ -1,43 +1,37 @@
-module Rsql
+require 'forwardable'
 
+module Rsql
   class Query
-    def self.call(query_str)
+    extend Forwardable
+
+    def self.call(database, query_str)
       p = Parser.new
-      ast = p.parse(query_str)
-      new(*ast[1]).call
+      sexp = p.parse(query_str)
+      new(database, *sexp).call
     end
 
-    def initialize(*args)
-      p args
+    def_delegators :@database, :from, :create_table
+
+    def initialize(database, *args)
+      @database = database
       @args = args
     end
 
     def call
-      @args.reduce do |acc, (name, args)|
-        send(name, *args)
+      @args.reduce(self) do |acc, (name, args)|
+        case args
+        when Hash
+          acc.send(name, **args)
+        when Array
+          acc.send(name, *args)
+        end
       end
     end
 
     private
 
-    def select(*columns)
-      @table.select(*columns)
-    end
-
-    def from(relation)
-      @table = Table.new
-      @table.add_column :email, :string
-      @table.add_column :age, :integer, null: false
-      @table.insert age: 30, email: 'dude@example.com'
-      @table.insert age: 15, email: 'lildude@example.com'
-      @table.insert age: 10, email: 'lkjsdfkj@example.com'
-      @table.insert age: 50, email: 'mid@example.com'
-      @table.insert age: 80, email: 'old@example.com'
-      @table
-    end
-
-    def where(*predicates)
-      @table.reduce
+    def select_query(*args)
+      self.class.new(@database, *args).call
     end
   end
 end

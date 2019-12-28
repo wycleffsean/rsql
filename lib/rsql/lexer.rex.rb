@@ -153,6 +153,8 @@ class Rsql::Lexer
             action { [:semicolon, text] }
           when text = ss.scan(/,/) then
             action { [:comma, text] }
+          when text = ss.scan(/\./) then
+            action { [:period, text] }
           when text = ss.scan(/\d+/) then
             action { [:integer, text.to_i] }
           when ss.skip(/'/) then

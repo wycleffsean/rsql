@@ -12,9 +12,6 @@ module Rsql
         FROM my_table
         WHERE ( this=that OR foo = bar ) AND a=b;
       SQL
-      puts ''
-      puts ''
-      p ast
     end
   end
 end

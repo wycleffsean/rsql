@@ -27,6 +27,7 @@ rules
   />/             { [:op_gt, text] }
   /;/             { [:semicolon, text] }
   /,/             { [:comma, text] }
+  /\./             { [:period, text] }
   /\d+/           { [:integer, text.to_i] }
   /'/		  :QUOTE
   :QUOTE /'/      nil

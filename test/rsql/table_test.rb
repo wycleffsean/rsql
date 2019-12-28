@@ -13,11 +13,25 @@ module Rsql
       assert type.kind_of?(Column::String)
     end
 
-    def test_add_column_type_string
+    def test_add_column_type_text
+      @table.add_column :email, :text
+      name, type = @table.columns.first
+      assert_equal name, :email
+      assert_kind_of Column::String, type
+    end
+
+    def test_add_column_type_integer
       @table.add_column :age, :integer
       name, type = @table.columns.first
       assert_equal name, :age
-      assert type.kind_of?(Column::Integer)
+      assert_kind_of Column::Integer, type
+    end
+
+    def test_add_column_type_int
+      @table.add_column :age, :int
+      name, type = @table.columns.first
+      assert_equal name, :age
+      assert_kind_of Column::Integer, type
     end
 
     def test_insert
