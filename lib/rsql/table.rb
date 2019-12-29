@@ -78,6 +78,14 @@ module Rsql
       Table.new(columns: @columns, rows: res)
     end
 
+    def limit(num)
+      Table.new(columns: @columns, rows: @rows.take(num).map{|_,v| v })
+    end
+
+    def offset(num)
+      Table.new(columns: @columns, rows: @rows.drop(num).map{|_,v| v })
+    end
+
     private
 
     def fetch_value(key_or_value, row)

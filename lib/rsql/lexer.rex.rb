@@ -109,6 +109,10 @@ class Rsql::Lexer
             action { [:kw_null, text] }
           when text = ss.scan(/not/i) then
             action { [:kw_not, text] }
+          when text = ss.scan(/limit/i) then
+            action { [:kw_limit, text] }
+          when text = ss.scan(/offset/i) then
+            action { [:kw_offset, text] }
           when text = ss.scan(/insert/i) then
             action { [:kw_insert, text] }
           when text = ss.scan(/into/i) then

@@ -37,6 +37,31 @@ module Rsql
       assert_includes res, { email: 'lkjsdfkj@example.com' }
     end
 
+    def test_query_with_limit
+      res = Query.call @db, <<-SQL
+        SELECT email FROM public.people WHERE age < 30 LIMIT 1;
+      SQL
+      assert_equal 1, res.count
+      assert_includes res, { email: 'lildude@example.com' }
+    end
+
+    def test_query_with_offset
+      res = Query.call @db, <<-SQL
+        SELECT email FROM public.people WHERE age < 30 OFFSET 1;
+      SQL
+      assert_equal 1, res.count
+      assert_includes res, { email: 'lkjsdfkj@example.com' }
+    end
+
+    def test_query_with_limit_and_offset
+      res = Query.call @db, <<-SQL
+        SELECT email FROM public.people WHERE age > 10 LIMIT 2 OFFSET 2;
+      SQL
+      assert_equal 2, res.count
+      assert_includes res, { email: 'mid@example.com' }
+      assert_includes res, { email: 'old@example.com' }
+    end
+
     def test_create_query
       db = Database.new
       res = Query.call db, <<-SQL

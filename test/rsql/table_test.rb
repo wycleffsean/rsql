@@ -82,7 +82,21 @@ module Rsql
       @table.add_column :age, :integer, null: false
       @table.insert age: 30
       @table.insert age: 40
-      assert_equal @table.where {|x| x[:age] > 30 }.length, 1
+      assert_equal 1, @table.where {|x| x[:age] > 30 }.length
+    end
+
+    def test_limit
+      @table.add_column :age, :integer, null: false
+      @table.insert age: 30
+      @table.insert age: 40
+      assert_equal 1, @table.limit(1).count
+    end
+
+    def test_offset
+      @table.add_column :age, :integer, null: false
+      @table.insert age: 30
+      @table.insert age: 40
+      assert_equal 1, @table.offset(1).count
     end
   end
 end

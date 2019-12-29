@@ -5,6 +5,8 @@ rules
   /where/i        { [:kw_where, text] }
   /null/i         { [:kw_null, text] }
   /not/i          { [:kw_not, text] }
+  /limit/i        { [:kw_limit, text] }
+  /offset/i       { [:kw_offset, text] }
   /insert/i       { [:kw_insert, text] }
   /into/i         { [:kw_into, text] }
   /values/i       { [:kw_values, text] }
