@@ -1,3 +1,45 @@
 #!/usr/bin/env ruby
 
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
+require "bundler/setup"
 require "rsql"
+require "etc"
+require "readline"
+
+puts <<~PREAMBLE
+rsql (#{Rsql::VERSION})
+Type "help" for help.
+
+PREAMBLE
+
+db = Rsql::Database.new name: Etc.getlogin
+
+def print_table(table)
+  p table if $VERBOSE
+  p table.columns.keys
+  table.each do |row|
+    p row
+  end
+   # id | email
+   # ----+-------
+  puts "(%d rows)" % table.count
+end
+
+while buf = Readline.readline("#{db.name}=# ", true)
+  begin
+    case buf
+    when /exit/i, '\q' then exit
+    when '\v'
+      $VERBOSE = false
+      puts "VERBOSE off"
+    when '\vv'
+      $VERBOSE = true
+      puts "VERBOSE on"
+    else
+      print_table Rsql::Query.call(db, buf)
+    end
+  rescue => e
+    puts e
+    puts e.backtrace if $VERBOSE
+  end
+end

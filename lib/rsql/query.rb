@@ -50,9 +50,10 @@ module Rsql
                      else
                        select_query(*select_query)
                      end
-      source_table.each do |row|
+      source_table.map do |row|
         target_table.insert row
       end
+      source_table
     end
   end
 end

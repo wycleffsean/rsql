@@ -43,7 +43,7 @@ rule
       column_definition { result = val }
     | column_definitions comma column_definition { result = val[0] << val[2] }
   column_definition: symbol symbol { result = [val[0], val[1]] }
-  insert_into_query: kw_insert kw_into relation insert_columns insert_data { result = [:insert_into_query, val.values_at(2, 3, 4).reduce(&:merge)] }
+  insert_into_query: kw_insert kw_into relation insert_columns insert_data { result = [:insert_into_query, val.values_at(2, 3, 4).compact.reduce(&:merge)] }
   insert_columns: { {} }
     | lparen symbol_collection rparen { result = { column_names: val[1] } }
   insert_data:

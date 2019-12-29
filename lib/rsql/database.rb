@@ -14,9 +14,10 @@ module Rsql
       end
     end
 
-    attr_reader :schemas
+    attr_reader :name, :schemas
 
     def initialize(**options)
+      @name = options.fetch(:name, 'main')
       @search_path = options.fetch(:search_path, [:public])
       @schemas = options.fetch(:schemas) do
         { public: Schema.new }

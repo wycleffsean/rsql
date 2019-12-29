@@ -296,7 +296,7 @@ module_eval(<<'.,.,', 'parser.y', 44)
 
 module_eval(<<'.,.,', 'parser.y', 45)
   def _reduce_9(val, _values, result)
-     result = [:insert_into_query, val.values_at(2, 3, 4).reduce(&:merge)]
+     result = [:insert_into_query, val.values_at(2, 3, 4).compact.reduce(&:merge)]
     result
   end
 .,.,
