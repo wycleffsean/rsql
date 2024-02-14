@@ -4,12 +4,13 @@ module Rsql
       params[:max] ||= Float::INFINITY
       params[:limit] = (params[:min]..params[:max]) if params.has_key?(:min)
       params[:limit] ||= params[:max]
-      super params
+      super
     end
 
     def assert!(column_name = '...', value)
       super
-      raise Column::ConstraintViolationError unless value.kind_of?(::Integer)
+      raise Column::ConstraintViolationError unless value.is_a?(::Integer)
+
       limit_exceeded = case limit = @params[:limit]
                        when Range
                          !limit.include?(value)

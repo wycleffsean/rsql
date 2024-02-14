@@ -9,7 +9,7 @@ module Rsql
 
     attr_reader :columns
 
-    alias :filter :select
+    alias filter select
 
     def initialize(columns: {}, rows: [], sequence: Sequence.new)
       if columns.is_a? Array
@@ -21,7 +21,7 @@ module Rsql
       @rows = {}
       @sequence = sequence
 
-      rows.each {|row| insert(row, skip_constraints: true) }
+      rows.each { |row| insert(row, skip_constraints: true) }
     end
 
     def each(&block)
@@ -30,22 +30,23 @@ module Rsql
 
     def add_column(name, type, **type_args)
       constraint = case type
-                  when :string, :text
-                    Column::String.new type_args
-                  when :integer, :int
-                    Column::Integer.new type_args
-                  when Class
-                    raise NotImplementedError
-                  else raise "type \"#{type}\" does not exist"
-                  end
+                   when :string, :text
+                     Column::String.new(**type_args)
+                   when :integer, :int
+                     Column::Integer.new(**type_args)
+                   when Class
+                     raise NotImplementedError
+                   else raise "type \"#{type}\" does not exist"
+                   end
       @columns[name.to_sym] = constraint
     end
 
-    def insert(row, skip_constraints: false)
+    def insert(row, skip_constraints = false)
       unless skip_constraints
         if (unknown_columns = row.keys - @columns.keys).any?
           raise UnknownColumnError, unknown_columns
         end
+
         @columns.each { |name, constraint| constraint.assert! name, row[name] }
       end
       @rows[@sequence.next!] = row
@@ -60,36 +61,38 @@ module Rsql
         cols = columns.map(&:to_sym)
         Table.new(
           columns: @columns.slice(*cols),
-          rows: @rows.values.map {|row| row.slice(*cols) }
+          rows: @rows.values.map { |row| row.slice(*cols) }
         )
       end
     end
 
     def where(*args, &block)
       return filter(*args, &block) if block_given?
+
       op = args.shift
       args.flatten!
       res = case op
-      when :<, :<=, :>=, :>
-        filter { |row| fetch_value(args[0], row).send(op, fetch_value(args[1], row)) }
-      else raise NotImplementedError
-      end
+            when :<, :<=, :>=, :>
+              filter { |row| fetch_value(args[0], row).send(op, fetch_value(args[1], row)) }
+            else raise NotImplementedError
+            end
       # TODO: should we dup here?
       Table.new(columns: @columns, rows: res)
     end
 
     def limit(num)
-      Table.new(columns: @columns, rows: @rows.take(num).map{|_,v| v })
+      Table.new(columns: @columns, rows: @rows.take(num).map { |_, v| v })
     end
 
     def offset(num)
-      Table.new(columns: @columns, rows: @rows.drop(num).map{|_,v| v })
+      Table.new(columns: @columns, rows: @rows.drop(num).map { |_, v| v })
     end
 
     private
 
     def fetch_value(key_or_value, row)
-      return key_or_value unless key_or_value.kind_of?(Symbol)
+      return key_or_value unless key_or_value.is_a?(Symbol)
+
       row[key_or_value]
     end
   end

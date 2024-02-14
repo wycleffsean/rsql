@@ -25,21 +25,19 @@ module Rsql
     end
 
     def create_schema(schema_name:, **args)
-      schemas[schema_name] = Schema.new **args
+      schemas[schema_name] = Schema.new(**args)
     end
 
-    def create_table(schema_name: nil, table_name:, **args)
-      fetch_schema(schema_name)[table_name] = Table.new **args
+    def create_table(table_name:, schema_name: nil, **args)
+      fetch_schema(schema_name)[table_name] = Table.new(**args)
     end
 
-    def from(schema_name: nil, table_name:)
+    def from(table_name:, schema_name: nil)
       schema = fetch_schema(schema_name) { |s| s.has_key?(table_name) }
-      if schema.nil?
-        raise TableNotPresentError, "relation \"#{table_name}\" does not exist"
-      else
-        schema.fetch(table_name) do
-          raise TableNotPresentError, "relation \"#{table_name}\" does not exist on schema \"#{schema_name}\""
-        end
+      raise TableNotPresentError, "relation \"#{table_name}\" does not exist" if schema.nil?
+
+      schema.fetch(table_name) do
+        raise TableNotPresentError, "relation \"#{table_name}\" does not exist on schema \"#{schema_name}\""
       end
     end
 
@@ -53,12 +51,11 @@ module Rsql
       end
 
       default_schemas = schemas.values_at(*@search_path).compact
-      result = if block_given?
-                 default_schemas.find(&block)
-               else
-                 default_schemas.first
-               end
-      result
+      if block_given?
+        default_schemas.find(&block)
+      else
+        default_schemas.first
+      end
     end
   end
 end
