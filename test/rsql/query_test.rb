@@ -1,9 +1,14 @@
-require "test_helper"
+require 'test_helper'
 
 module Rsql
   class QueryTest < Minitest::Test
     def setup
       @db = Database.new
+      setup_people
+      setup_orders
+    end
+
+    def setup_people
       people = @db.create_table(table_name: :people)
       people.add_column :email, :string
       people.add_column :age, :integer, null: false
@@ -12,6 +17,16 @@ module Rsql
       people.insert age: 10, email: 'lkjsdfkj@example.com'
       people.insert age: 50, email: 'mid@example.com'
       people.insert age: 80, email: 'old@example.com'
+    end
+
+    def setup_orders
+      orders = @db.create_table(table_name: :orders)
+      orders.add_column :id, :integer, null: false
+      orders.insert id: 30
+      orders.insert id: 15
+      orders.insert id: 10
+      orders.insert id: 50
+      orders.insert id: 80
     end
 
     def test_trivial_query
@@ -23,9 +38,18 @@ module Rsql
         SELECT email FROM people WHERE age >= 30;
       SQL
       assert_equal 3, res.count
-      assert_includes res, {email: "dude@example.com"}
-      assert_includes res, {email: "mid@example.com"}
-      assert_includes res, {email: "old@example.com"}
+      assert_includes res, { email: 'dude@example.com' }
+      assert_includes res, { email: 'mid@example.com' }
+      assert_includes res, { email: 'old@example.com' }
+    end
+
+    # TODO: this should really be a parser/lexer test
+    def test_simple_query_from_table_with_keyword_conflict
+      # orders accidentally parses as "or" keyword
+      res = Query.call @db, <<-SQL
+        SELECT email FROM orders;
+      SQL
+      assert_equal 5, res.count
     end
 
     def test_query_with_fully_qualified_table
@@ -89,9 +113,9 @@ module Rsql
         SELECT age, email FROM people WHERE age >= 30;
       SQL
       assert_equal 3, res.count
-      assert_includes res, {email: "dude@example.com", age: 30}
-      assert_includes res, {email: "mid@example.com", age: 50}
-      assert_includes res, {email: "old@example.com", age: 80}
+      assert_includes res, { email: 'dude@example.com', age: 30 }
+      assert_includes res, { email: 'mid@example.com', age: 50 }
+      assert_includes res, { email: 'old@example.com', age: 80 }
     end
   end
 end

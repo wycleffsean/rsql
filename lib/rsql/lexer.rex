@@ -19,7 +19,7 @@ rules
   /\(/            { [:lparen, text] }
   /\)/            { [:rparen, text] }
   /\s+/           #{ [:ws, text] }
-  /or/i           { [:op_or, text] }
+  /or\s/i           { [:op_or, text] }
   /and/i          { [:op_and, text] }
   /[a-zA-Z]\w*/   { [:identifier, text] }
   /=/             { [:op_equal, text] }
