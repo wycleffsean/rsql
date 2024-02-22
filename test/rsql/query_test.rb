@@ -98,6 +98,17 @@ module Rsql
       assert_kind_of Column::Integer, db.schemas[:public][:people].columns[:age]
     end
 
+    # TODO: this should really be a parser/lexer test
+    def test_create_query_with_keyword_conflict
+      db = Database.new
+      res = Query.call db, <<-SQL
+      CREATE TABLE ands ( -- and is a keyword
+        created_at TEXT, -- create is a keyword
+        age INT
+      );
+      SQL
+    end
+
     def test_insert_into
       count = @db.schemas[:public][:people].count
       res = Query.call @db, <<-SQL

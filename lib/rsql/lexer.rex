@@ -10,7 +10,7 @@ rules
   /insert/i       { [:kw_insert, text] }
   /into/i         { [:kw_into, text] }
   /values/i       { [:kw_values, text] }
-  /create/i       { [:kw_create, text] }
+  /create\s/i       { [:kw_create, text] }
   /table/i        { [:kw_table, text] }
   /constraint/i   { [:kw_constraint, text] }
   /key/i          { [:kw_key, text] }
@@ -20,7 +20,7 @@ rules
   /\)/            { [:rparen, text] }
   /\s+/           #{ [:ws, text] }
   /or\s/i           { [:op_or, text] }
-  /and/i          { [:op_and, text] }
+  /and\s/i          { [:op_and, text] }
   /[a-zA-Z]\w*/   { [:identifier, text] }
   /=/             { [:op_equal, text] }
   /<=/            { [:op_lte, text] }
@@ -31,7 +31,12 @@ rules
   /,/             { [:comma, text] }
   /\./             { [:period, text] }
   /\d+/           { [:integer, text.to_i] }
+
   /'/		  :QUOTE
   :QUOTE /'/      nil
   :QUOTE /[^']+/  { [:string, text] }
+
+  /--/  :COMMENT
+  :COMMENT /\n/      nil
+  :COMMENT /./
 end

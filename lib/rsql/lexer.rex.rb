@@ -119,7 +119,7 @@ class Rsql::Lexer
             action { [:kw_into, text] }
           when text = ss.scan(/values/i) then
             action { [:kw_values, text] }
-          when text = ss.scan(/create/i) then
+          when text = ss.scan(/create\s/i) then
             action { [:kw_create, text] }
           when text = ss.scan(/table/i) then
             action { [:kw_table, text] }
@@ -139,7 +139,7 @@ class Rsql::Lexer
             # do nothing
           when text = ss.scan(/or\s/i) then
             action { [:op_or, text] }
-          when text = ss.scan(/and/i) then
+          when text = ss.scan(/and\s/i) then
             action { [:op_and, text] }
           when text = ss.scan(/[a-zA-Z]\w*/) then
             action { [:identifier, text] }
@@ -163,6 +163,8 @@ class Rsql::Lexer
             action { [:integer, text.to_i] }
           when ss.skip(/'/) then
             [:state, :QUOTE]
+          when ss.skip(/--/) then
+            [:state, :COMMENT]
           else
             text = ss.string[ss.pos .. -1]
             raise ScanError, "can not match (#{state.inspect}) at #{location}: '#{text}'"
@@ -173,6 +175,16 @@ class Rsql::Lexer
             [:state, nil]
           when text = ss.scan(/[^']+/) then
             action { [:string, text] }
+          else
+            text = ss.string[ss.pos .. -1]
+            raise ScanError, "can not match (#{state.inspect}) at #{location}: '#{text}'"
+          end
+        when :COMMENT then
+          case
+          when ss.skip(/\n/) then
+            [:state, nil]
+          when ss.skip(/./) then
+            # do nothing
           else
             text = ss.string[ss.pos .. -1]
             raise ScanError, "can not match (#{state.inspect}) at #{location}: '#{text}'"

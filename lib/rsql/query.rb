@@ -43,7 +43,8 @@ module Rsql
     # Also INSERT INTO ... SELECT ... FROM is order agnostic, e.g.
     #   INSERT INTO thing(foo, bar) SELECT bar, foo FROM other_thing;
     # will correctly match column names
-    def insert_into_query(schema_name: nil, table_name:, column_names:, rows: [], select_query: nil)
+    def insert_into_query(table_name:, column_names:, schema_name: nil, rows: [], select_query: nil)
+      # TODO: column_names can be nil, raise an error i.e. INSERT INTO things() VALUES (); is not a valid query
       target_table = @database.from(schema_name: schema_name, table_name: table_name)
       source_table = if select_query.nil?
                        Table.new rows: rows.map { |row| Hash[column_names.zip(row)] }
